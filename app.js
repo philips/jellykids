@@ -126,18 +126,19 @@ async function handleLogin() {
 
 // Initialize app when DOM is ready
 document.addEventListener('DOMContentLoaded', async () => {
-    // Check if we have stored credentials
-    const storedServer = localStorage.getItem('jellyfinServer');
-    const storedUsername = localStorage.getItem('jellyfinUsername');
-    
-    if (storedServer && storedUsername) {
-        JELLYFIN_SERVER = storedServer;
-        document.getElementById('serverUrl').value = storedServer;
-        document.getElementById('username').value = storedUsername;
-        document.getElementById('password').focus();
-    } else {
-        document.getElementById('serverUrl').focus();
-    }
+    try {
+        // Check if we have stored credentials
+        const storedServer = localStorage.getItem('jellyfinServer');
+        const storedUsername = localStorage.getItem('jellyfinUsername');
+        
+        if (storedServer && storedUsername) {
+            JELLYFIN_SERVER = storedServer;
+            document.getElementById('serverUrl').value = storedServer;
+            document.getElementById('username').value = storedUsername;
+            document.getElementById('password').focus();
+        } else {
+            document.getElementById('serverUrl').focus();
+        }
     } catch (error) {
         console.error('Initialization error:', error);
     }
