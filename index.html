@@ -63,9 +63,41 @@
         .hidden {
             display: none;
         }
+        
+        #videoContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+        }
+        
+        #videoPlayer {
+            width: 100%;
+            height: 100%;
+        }
+        
+        #backButton {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            font-size: 1.5em;
+            padding: 10px 20px;
+            background: #00a4dc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
+    <div id="videoContainer" class="hidden">
+        <button id="backButton" onclick="showItemsList()">← Back</button>
+        <video id="videoPlayer" controls autoplay></video>
+    </div>
     <div id="loginContainer" class="login-container">
         <div class="login-form">
             <input type="text" id="serverUrl" placeholder="Jellyfin Server URL" class="login-input">

@@ -63,10 +63,46 @@ async function fetchEpisodes(seriesId) {
     }
 }
 
-function startPlayback(itemId) {
-    // TODO: Implement actual playback based on your Jellyfin setup
-    console.log('Starting playback for item ID:', itemId);
-    alert(`Playback starting for item ID: ${itemId}`);
+async function startPlayback(itemId) {
+    try {
+        const response = await fetch(`${JELLYFIN_SERVER}/Items/${itemId}/PlaybackInfo`, {
+            headers: {
+                'X-Emby-Token': AUTH_TOKEN,
+                'Accept': 'application/json'
+            }
+        });
+        const data = await response.json();
+        
+        const videoPlayer = document.getElementById('videoPlayer');
+        const mediaSource = data.MediaSources[0];
+        const videoUrl = `${JELLYFIN_SERVER}/Videos/${itemId}/stream?Container=${mediaSource.Container}&Static=true&MediaSourceId=${mediaSource.Id}&api_key=${AUTH_TOKEN}`;
+
+        videoPlayer.innerHTML = '';
+        videoPlayer.src = videoUrl;
+        videoPlayer.play();
+        
+        document.getElementById('itemsContainer').classList.add('hidden');
+        document.getElementById('videoContainer').classList.remove('hidden');
+        
+        videoPlayer.addEventListener('ended', showItemsList);
+        videoPlayer.addEventListener('error', () => {
+            alert('Playback failed. Please try another item.');
+            showItemsList();
+        });
+    } catch (error) {
+        console.error('Playback failed:', error);
+        alert('Playback failed. Please try another item.');
+        showItemsList();
+    }
+}
+
+function showItemsList() {
+    const videoPlayer = document.getElementById('videoPlayer');
+    videoPlayer.pause();
+    videoPlayer.removeAttribute('src');
+    
+    document.getElementById('videoContainer').classList.add('hidden');
+    document.getElementById('itemsContainer').classList.remove('hidden');
 }
 
 // Authentication functions
