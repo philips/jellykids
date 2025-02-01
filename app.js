@@ -4,11 +4,12 @@ const USERNAME = localStorage.getItem('jellyfinUsername') || '';
 
 async function fetchLibraryItems() {
     try {
-        const response = await fetch(`${JELLYFIN_SERVER}/Items`, {
+        const userId = localStorage.getItem('jellyfinUserId');
+        const response = await fetch(`${JELLYFIN_SERVER}/Users/${userId}/Items?Recursive=true&IncludeItemTypes=Movie,Series&SortBy=SortName`, {
             headers: {
                 'X-Emby-Token': AUTH_TOKEN,
                 'Accept': 'application/json'
-            }
+            },
         });
         return await response.json();
     } catch (error) {
@@ -49,7 +50,7 @@ async function fetchEpisodes(seriesId) {
     try {
         const response = await fetch(`${JELLYFIN_SERVER}/Shows/${seriesId}/Episodes`, {
             headers: {
-                'X-Emby-Token': API_TOKEN,
+                'X-Emby-Token': AUTH_TOKEN,
                 'Accept': 'application/json'
             }
         });
@@ -103,7 +104,8 @@ async function handleLogin() {
         AUTH_TOKEN = token;
         JELLYFIN_SERVER = serverUrl;
         
-        // Store username and server URL in localStorage
+        // Store user details in localStorage
+        localStorage.setItem('jellyfinUserId', authData.User.Id);
         localStorage.setItem('jellyfinUsername', username);
         localStorage.setItem('jellyfinServer', serverUrl);
         
