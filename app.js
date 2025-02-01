@@ -1,5 +1,6 @@
 let AUTH_TOKEN = '';
 let JELLYFIN_SERVER = '';
+let AUTH_DATA = '';
 const USERNAME = localStorage.getItem('jellyfinUsername') || '';
 
 async function fetchLibraryItems() {
@@ -86,6 +87,7 @@ async function authenticateUser(serverUrl, username, password) {
         if (!authResponse.ok) throw new Error('Login failed');
         
         const authData = await authResponse.json();
+	AUTH_DATA = authData;
         return authData.AccessToken;
     } catch (error) {
         console.error('Authentication error:', error);
@@ -105,7 +107,7 @@ async function handleLogin() {
         JELLYFIN_SERVER = serverUrl;
         
         // Store user details in localStorage
-        localStorage.setItem('jellyfinUserId', authData.User.Id);
+        localStorage.setItem('jellyfinUserId', AUTH_DATA.User.Id);
         localStorage.setItem('jellyfinUsername', username);
         localStorage.setItem('jellyfinServer', serverUrl);
         
