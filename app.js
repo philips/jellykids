@@ -146,6 +146,7 @@ async function handleLogin() {
         localStorage.setItem('jellyfinUserId', AUTH_DATA.User.Id);
         localStorage.setItem('jellyfinUsername', username);
         localStorage.setItem('jellyfinServer', serverUrl);
+        localStorage.setItem('jellyfinToken', token);
         
         // Show media content and hide login
         document.getElementById('loginContainer').classList.add('hidden');
@@ -167,12 +168,33 @@ async function handleLogin() {
 // Initialize app when DOM is ready
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        // Check if we have stored credentials
+        // Check for complete set of stored credentials
         const storedServer = localStorage.getItem('jellyfinServer');
         const storedUsername = localStorage.getItem('jellyfinUsername');
+        const storedUserId = localStorage.getItem('jellyfinUserId');
+        const storedToken = localStorage.getItem('jellyfinToken');
         
-        if (storedServer && storedUsername) {
+        if (storedServer && storedUsername && storedUserId && storedToken) {
+            // Attempt to use stored credentials
+            AUTH_TOKEN = storedToken;
             JELLYFIN_SERVER = storedServer;
+            
+            try {
+                // Verify credentials are still valid
+                const data = await fetchLibraryItems();
+                document.getElementById('loginContainer').classList.add('hidden');
+                document.getElementById('itemsContainer').classList.remove('hidden');
+                populateItems(data.Items || []);
+                return;
+            } catch (error) {
+                console.log('Stored credentials expired, showing login form');
+                localStorage.removeItem('jellyfinToken');
+            }
+        }
+
+        // Show login form if any credentials are missing or invalid
+        document.getElementById('loginContainer').classList.remove('hidden');
+        if (storedServer && storedUsername) {
             document.getElementById('serverUrl').value = storedServer;
             document.getElementById('username').value = storedUsername;
             document.getElementById('password').focus();
