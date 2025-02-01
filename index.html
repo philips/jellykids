@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kid's Jellyfin</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: black;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        #itemsContainer {
+            overflow-y: auto;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .item {
+            font-size: 2.5em;
+            padding: 15px 0;
+            border-bottom: 1px solid #333;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="itemsContainer"></div>
+    <script src="app.js"></script>
+</body>
+</html>
