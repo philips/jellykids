@@ -26,10 +26,55 @@
             border-bottom: 1px solid #333;
             cursor: pointer;
         }
+
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 300px;
+        }
+
+        .login-input {
+            font-size: 1.5em;
+            padding: 10px;
+            background: #222;
+            color: white;
+            border: 1px solid #333;
+            border-radius: 4px;
+        }
+
+        .login-button {
+            font-size: 1.5em;
+            padding: 15px;
+            background: #00a4dc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <div id="itemsContainer"></div>
+    <div id="loginContainer" class="login-container">
+        <div class="login-form">
+            <input type="text" id="serverUrl" placeholder="Jellyfin Server URL" class="login-input">
+            <input type="text" id="username" placeholder="Username" class="login-input">
+            <input type="password" id="password" placeholder="Password" class="login-input">
+            <button onclick="handleLogin()" class="login-button">Login</button>
+        </div>
+    </div>
+    <div id="itemsContainer" class="hidden"></div>
     <script src="app.js"></script>
 </body>
 </html>
