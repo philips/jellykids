@@ -12,6 +12,14 @@ async function fetchLibraryItems() {
                 'Accept': 'application/json'
             },
         });
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('jellyfinUserId');
+                localStorage.removeItem('jellyfinToken');
+                window.location.reload();
+            }
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         return await response.json();
     } catch (error) {
         console.error('Failed to fetch items:', error);
@@ -55,6 +63,14 @@ async function fetchEpisodes(seriesId) {
                 'Accept': 'application/json'
             }
         });
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('jellyfinUserId');
+                localStorage.removeItem('jellyfinToken');
+                window.location.reload();
+            }
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         return data.Items || [];
     } catch (error) {
@@ -72,6 +88,14 @@ async function startPlayback(itemId) {
                 'Accept': 'application/json'
             }
         });
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('jellyfinUserId');
+                localStorage.removeItem('jellyfinToken');
+                window.location.reload();
+            }
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         
         const videoPlayer = document.getElementById('videoPlayer');
@@ -163,6 +187,9 @@ async function handleLogin() {
             navigator.serviceWorker.register('sw.js');
         }
     } catch (error) {
+        localStorage.removeItem('jellyfinUserId');
+        localStorage.removeItem('jellyfinToken');
+        localStorage.removeItem('jellyfinServer');
         console.error('Login failed:', error);
     }
 }
