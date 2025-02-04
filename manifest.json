@@ -1,7 +1,8 @@
 {
-    "name": "Kid's Jellyfin",
-    "short_name": "KJellyfin",
-    "start_url": "/",
+    "name": "Jellykids",
+    "short_name": "Jellykids",
+    "start_url": "/jellykids",
+    "scope": "/jellykids",
     "display": "standalone",
     "background_color": "#000000",
     "theme_color": "#000000",
