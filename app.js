@@ -64,6 +64,7 @@ async function fetchEpisodes(seriesId) {
 }
 
 async function startPlayback(itemId) {
+    let videoUrl = '';
     try {
         const response = await fetch(`${JELLYFIN_SERVER}/Items/${itemId}/PlaybackInfo`, {
             headers: {
@@ -75,7 +76,8 @@ async function startPlayback(itemId) {
         
         const videoPlayer = document.getElementById('videoPlayer');
         const mediaSource = data.MediaSources[0];
-        const videoUrl = `${JELLYFIN_SERVER}/Videos/${itemId}/stream?Container=${mediaSource.Container}&Static=true&MediaSourceId=${mediaSource.Id}&api_key=${AUTH_TOKEN}`;
+        videoUrl = `${JELLYFIN_SERVER}/Videos/${itemId}/stream?Container=${mediaSource.Container}&Static=true&MediaSourceId=${mediaSource.Id}&api_key=${AUTH_TOKEN}`;
+	console.log(videoUrl);
 
         videoPlayer.innerHTML = '';
         videoPlayer.src = videoUrl;
@@ -90,7 +92,7 @@ async function startPlayback(itemId) {
             showItemsList();
         });
     } catch (error) {
-        console.error('Playback failed:', error);
+        console.error(`Playback failed ${videoUrl}:`, error);
         alert('Playback failed. Please try another item.');
         showItemsList();
     }
