@@ -34,11 +34,28 @@
             height: 100vh;
         }
 
+        .login-header {
+            font-size: 2em;
+            text-align: center;
+            margin-bottom: 25px;
+            color: #00a4dc;
+        }
+
         .login-form {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
             width: 300px;
+        }
+
+        .login-disclaimer {
+            font-size: 0.8em;
+            text-align: center;
+            color: #666;
+            margin-top: 10px;
+            line-height: 1.4;
+            max-width: 280px;
+            align-self: center;
         }
 
         .login-input {
@@ -116,10 +133,12 @@
     </div>
     <div id="loginContainer" class="login-container">
         <div class="login-form">
+            <h1 class="login-header">Jellykids: A Simple UI for Jellyfin</h1>
             <input type="text" id="serverUrl" placeholder="Jellyfin Server URL" class="login-input">
             <input type="text" id="username" placeholder="Username" class="login-input">
             <input type="password" id="password" placeholder="Password" class="login-input">
             <button onclick="handleLogin()" class="login-button">Login</button>
+            <p class="login-disclaimer">This app runs locally in your browser and stores no data</p>
         </div>
     </div>
     <div id="itemsContainer" class="hidden"></div>
