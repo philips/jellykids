@@ -80,33 +80,29 @@ async function fetchEpisodes(seriesId) {
 }
 
 async function startPlayback(itemId) {
-    let videoUrl = '';
     try {
-        const response = await fetch(`${JELLYFIN_SERVER}/Items/${itemId}/PlaybackInfo`, {
-            headers: {
-                'X-Emby-Token': AUTH_TOKEN,
-                'Accept': 'application/json'
-            }
-        });
-        if (!response.ok) {
-            if (response.status === 401) {
-                localStorage.removeItem('jellyfinUserId');
-                localStorage.removeItem('jellyfinToken');
-                window.location.reload();
-            }
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        
         const videoPlayer = document.getElementById('videoPlayer');
-        const mediaSource = data.MediaSources[0];
-        videoUrl = `${JELLYFIN_SERVER}/Videos/${itemId}/stream?Container=${mediaSource.Container}&Static=true&MediaSourceId=${mediaSource.Id}&api_key=${AUTH_TOKEN}`;
-	console.log(videoUrl);
-
-        videoPlayer.innerHTML = '';
-        videoPlayer.src = videoUrl;
-        videoPlayer.play();
+        videoPlayer.innerHTML = ''; // Clear previous sources
         
+        // Add Safari-friendly attributes
+        videoPlayer.setAttribute('playsinline', '');
+        videoPlayer.muted = true; // Required for autoplay on iOS
+        
+        const source = document.createElement('source');
+        const mediaSource = `${JELLYFIN_SERVER}/Videos/${itemId}/stream?static=true&MediaSourceId=${itemId}&api_key=${AUTH_TOKEN}&Tag=${Date.now()}`;
+        source.src = mediaSource;
+        source.type = 'video/mp4; codecs="avc1.42E01E,mp4a.40.2"';
+        
+        videoPlayer.appendChild(source);
+        
+        // Handle Safari's autoplay restrictions
+        const playPromise = videoPlayer.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                document.getElementById('playButton').classList.remove('hidden');
+            });
+        }
+
         document.getElementById('itemsContainer').classList.add('hidden');
         document.getElementById('videoContainer').classList.remove('hidden');
         
@@ -115,9 +111,9 @@ async function startPlayback(itemId) {
             alert('Playback failed. Please try another item.');
             showItemsList();
         });
+        
     } catch (error) {
-        console.error(`Playback failed ${videoUrl}:`, error);
-        alert('Playback failed. Please try another item.');
+        console.error('Playback failed:', error);
         showItemsList();
     }
 }
