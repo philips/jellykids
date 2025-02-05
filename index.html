@@ -91,11 +91,27 @@
             border-radius: 4px;
             cursor: pointer;
         }
+
+        #playButton {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            font-size: 2em;
+            padding: 20px 40px;
+            background: #00a4dc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <div id="videoContainer" class="hidden">
         <button id="backButton" onclick="showItemsList()">← Back</button>
+        <button id="playButton" class="hidden" onclick="document.getElementById('videoPlayer').play()">Play</button>
         <video id="videoPlayer" controls autoplay></video>
     </div>
     <div id="loginContainer" class="login-container">
