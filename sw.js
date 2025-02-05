@@ -47,20 +47,30 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     (async () => {
       try {
+        const request = event.request;
+        
+        // Bypass caching for non-GET requests and sensitive endpoints
+        if (request.method !== 'GET' || 
+            request.url.includes('/Videos/') ||
+            request.url.includes('/Users/') ||
+            request.url.includes('api_key=')) {
+          return fetch(request);
+        }
+
         // Try to get from cache first
-        const cachedResponse = await caches.match(event.request);
+        const cachedResponse = await caches.match(request);
         if (cachedResponse) {
           return cachedResponse;
         }
 
         // If not in cache, try network
-        const networkResponse = await fetch(event.request);
+        const networkResponse = await fetch(request);
         
-        // Only cache successful responses
-        if (networkResponse && networkResponse.status === 200) {
+        // Only cache successful responses for core files
+        if (networkResponse.ok && CORE_FILES.some(file => request.url.endsWith(file))) {
           const cache = await caches.open(CACHE_VERSION);
           try {
-            await cache.put(event.request, networkResponse.clone());
+            await cache.put(request, networkResponse.clone());
           } catch (err) {
             console.error('Failed to cache response:', err);
           }
@@ -69,7 +79,7 @@ self.addEventListener('fetch', (event) => {
         return networkResponse;
       } catch (error) {
         console.error('Fetch handler failed:', error);
-        throw error; // Re-throw to let the browser handle the error
+        throw error;
       }
     })()
   );
