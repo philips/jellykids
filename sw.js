@@ -1,9 +1,15 @@
-const CACHE_VERSION = 'v2024.02.05-2';
+const CACHE_VERSION = 'v2024.02.05-3';
 const CORE_FILES = [
   './',
   './index.html',
   './app.js',
-  './manifest.json'
+  './manifest.json',
+  './icons/48-48.png',
+  './icons/72-72.png',
+  './icons/96-96.png',
+  './icons/144-144.png',
+  './icons/192-192.png',
+  './icons/512-512.png'
 ];
 
 self.addEventListener('install', (event) => {
