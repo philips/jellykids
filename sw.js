@@ -1,28 +1,20 @@
-const CACHE_VERSION = 'v2024.02.01-3';
+const CACHE_VERSION = 'v2024.02.05-2';
 const CORE_FILES = [
-  '/jellykids/',
-  '/jellykids/index.html',
-  '/jellykids/app.js',
-  '/jellykids/manifest.json',
-  '/jellykids/icons/icon-192x192.png',
-  '/jellykids/icons/icon-512x512.png'
+  './',
+  './index.html',
+  './app.js',
+  './manifest.json'
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_VERSION).then(async (cache) => {
-      try {
-        // First try to cache fresh resources
-        await cache.addAll(CORE_FILES);
-      } catch (error) {
-        console.error('Failed to cache all resources:', error);
-        // If caching fails, attempt to cache resources individually
-        for (const file of CORE_FILES) {
-          try {
-            await cache.add(file);
-          } catch (err) {
-            console.error(`Failed to cache ${file}:`, err);
-          }
+      // Add files individually with error handling
+      for (const url of CORE_FILES) {
+        try {
+          await cache.add(url);
+        } catch (error) {
+          console.warn(`Failed to cache ${url}:`, error);
         }
       }
     })
