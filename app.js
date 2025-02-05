@@ -86,35 +86,38 @@ async function startPlayback(itemId) {
         videoPlayer.setAttribute('playsinline', '');
         videoPlayer.muted = true;
 
-        // Use Safari-friendly streaming parameters
-        const mediaSource = `${JELLYFIN_SERVER}/Videos/${itemId}/stream.${getSafariFormat()}?Static=true&mediaSourceId=${itemId}&api_key=${AUTH_TOKEN}&Tag=${Date.now()}`;
-        
+        const mediaSource = isSafari() ? 
+            `${JELLYFIN_SERVER}/Videos/${itemId}/master.m3u8?` + new URLSearchParams({
+                DeviceId: 'kids-ui-' + Math.random().toString(36).substring(2, 15),
+                MediaSourceId: itemId,
+                api_key: AUTH_TOKEN,
+                PlaySessionId: Math.random().toString(36).substring(2, 15),
+                VideoCodec: 'h264',
+                AudioCodec: 'aac',
+                SubtitleMethod: 'Encode',
+                SegmentContainer: 'mp4',
+                MinSegments: 2,
+                Tag: Date.now()
+            }) :
+            `${JELLYFIN_SERVER}/Videos/${itemId}/stream?static=true&mediaSourceId=${itemId}&api_key=${AUTH_TOKEN}`;
+
         const source = document.createElement('source');
         source.src = mediaSource;
-        source.type = getSafariMimeType();
-        
-        videoPlayer.appendChild(source);
-        videoPlayer.load(); // Explicitly load the source
+        source.type = isSafari() ? 'application/vnd.apple.mpegurl' : 'video/mp4';
 
-        // Safari-specific event handling
+        videoPlayer.appendChild(source);
+        videoPlayer.load();
+
         if (isSafari()) {
             videoPlayer.addEventListener('loadedmetadata', () => {
-                videoPlayer.play().catch(error => {
-                    document.getElementById('playButton').classList.remove('hidden');
-                });
-            });
+                videoPlayer.play().catch(handlePlayError);
+            }, { once: true });
         } else {
             videoPlayer.play().catch(handlePlayError);
         }
 
         document.getElementById('itemsContainer').classList.add('hidden');
         document.getElementById('videoContainer').classList.remove('hidden');
-
-        videoPlayer.addEventListener('ended', showItemsList);
-        videoPlayer.addEventListener('error', () => {
-            alert('Playback failed. Please try another item.');
-            showItemsList();
-        });
 
     } catch (error) {
         console.error('Playback failed:', error);
@@ -123,15 +126,8 @@ async function startPlayback(itemId) {
 }
 
 function isSafari() {
-    return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-}
-
-function getSafariFormat() {
-    return isSafari() ? 'mp4' : 'mkv';
-}
-
-function getSafariMimeType() {
-    return isSafari() ? 'video/mp4' : 'video/x-matroska; codecs="hevc"';
+    return /^((?!chrome|android).)*safari/i.test(navigator.userAgent) || 
+           navigator.userAgent.includes('Mac OS') && navigator.maxTouchPoints > 1;
 }
 
 function handlePlayError(error) {
