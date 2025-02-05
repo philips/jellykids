@@ -83,18 +83,18 @@ async function startPlayback(itemId) {
     try {
         const videoPlayer = document.getElementById('videoPlayer');
         videoPlayer.innerHTML = ''; // Clear previous sources
-        
+
         // Add Safari-friendly attributes
         videoPlayer.setAttribute('playsinline', '');
         videoPlayer.muted = true; // Required for autoplay on iOS
-        
+
         const source = document.createElement('source');
         const mediaSource = `${JELLYFIN_SERVER}/Videos/${itemId}/stream?static=true&MediaSourceId=${itemId}&api_key=${AUTH_TOKEN}&Tag=${Date.now()}`;
         source.src = mediaSource;
         source.type = 'video/mp4; codecs="avc1.42E01E,mp4a.40.2"';
-        
+
         videoPlayer.appendChild(source);
-        
+
         // Handle Safari's autoplay restrictions
         const playPromise = videoPlayer.play();
         if (playPromise !== undefined) {
@@ -105,13 +105,13 @@ async function startPlayback(itemId) {
 
         document.getElementById('itemsContainer').classList.add('hidden');
         document.getElementById('videoContainer').classList.remove('hidden');
-        
+
         videoPlayer.addEventListener('ended', showItemsList);
         videoPlayer.addEventListener('error', () => {
             alert('Playback failed. Please try another item.');
             showItemsList();
         });
-        
+
     } catch (error) {
         console.error('Playback failed:', error);
         showItemsList();
@@ -122,7 +122,7 @@ function showItemsList() {
     const videoPlayer = document.getElementById('videoPlayer');
     videoPlayer.pause();
     videoPlayer.removeAttribute('src');
-    
+
     document.getElementById('videoContainer').classList.add('hidden');
     document.getElementById('itemsContainer').classList.remove('hidden');
 }
@@ -143,7 +143,7 @@ async function authenticateUser(serverUrl, username, password) {
         });
 
         if (!authResponse.ok) throw new Error('Login failed');
-        
+
         const authData = await authResponse.json();
 	AUTH_DATA = authData;
         return authData.AccessToken;
@@ -163,21 +163,21 @@ async function handleLogin() {
         const token = await authenticateUser(serverUrl, username, password);
         AUTH_TOKEN = token;
         JELLYFIN_SERVER = serverUrl;
-        
+
         // Store user details in localStorage
         localStorage.setItem('jellyfinUserId', AUTH_DATA.User.Id);
         localStorage.setItem('jellyfinUsername', username);
         localStorage.setItem('jellyfinServer', serverUrl);
         localStorage.setItem('jellyfinToken', token);
-        
+
         // Show media content and hide login
         document.getElementById('loginContainer').classList.add('hidden');
         document.getElementById('itemsContainer').classList.remove('hidden');
-        
+
         // Load library items
         const data = await fetchLibraryItems();
         populateItems(data.Items || []);
-        
+
         // Register service worker after successful auth
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js');
@@ -198,12 +198,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         const storedUsername = localStorage.getItem('jellyfinUsername');
         const storedUserId = localStorage.getItem('jellyfinUserId');
         const storedToken = localStorage.getItem('jellyfinToken');
-        
+
         if (storedServer && storedUsername && storedUserId && storedToken) {
             // Attempt to use stored credentials
             AUTH_TOKEN = storedToken;
             JELLYFIN_SERVER = storedServer;
-            
+
             try {
                 // Verify credentials are still valid
                 const data = await fetchLibraryItems();
