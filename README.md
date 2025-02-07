@@ -1,5 +1,7 @@
 # Jellykids: A Super Simple Jellyfin Frontend
 
+![](icons/jellykids-words.jpg)
+
 I wanted a super simple Jellyfin app for my kids to use. The UI is fully text based. Clicking on a title either plays the movie or plays a random episode.
 
 This is also a "Progressive Web App" so you can add it to your homescreen on iOS/iPadOS/Android and have it behave like an "App Store" installed app without the browser elements (and it should work with screentime, etc).
